@@ -20,7 +20,6 @@
       "dest": "/client/$1"
     }
   ],
-  "functions": {},
   "headers": [
     {
       "source": "/(.*)",
