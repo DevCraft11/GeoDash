@@ -28,15 +28,25 @@ function resizeCanvas() {
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
     
-    // Calculate canvas size maintaining 16:9 aspect ratio
+    // Calculate canvas size with better viewport handling
     const aspectRatio = 16 / 9;
-    let canvasWidth = Math.min(containerWidth * 0.95, 1200);
+    
+    // Account for UI elements (score, mobile controls) by using less screen space
+    const maxWidth = containerWidth * 0.9;
+    const maxHeight = containerHeight * 0.8; // Reduced from 0.9 to 0.8 to leave more space
+    
+    let canvasWidth = Math.min(maxWidth, 1000); // Reduced max width from 1200 to 1000
     let canvasHeight = canvasWidth / aspectRatio;
     
-    if (canvasHeight > containerHeight * 0.9) {
-        canvasHeight = containerHeight * 0.9;
+    // If calculated height is too big, adjust based on height constraint
+    if (canvasHeight > maxHeight) {
+        canvasHeight = maxHeight;
         canvasWidth = canvasHeight * aspectRatio;
     }
+    
+    // Ensure minimum size for playability
+    canvasWidth = Math.max(canvasWidth, 400);
+    canvasHeight = Math.max(canvasHeight, 225);
     
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;

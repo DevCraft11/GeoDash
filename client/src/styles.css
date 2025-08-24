@@ -21,6 +21,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 #gameCanvas {
@@ -140,10 +142,11 @@ button:active {
 
 #mobileControls {
     position: absolute;
-    bottom: 30px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     pointer-events: all;
+    z-index: 15;
 }
 
 #jumpBtn {
