@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometry Rush - 2D Platformer</title>
+    <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="gameUI">
+            <div id="score">Distance: 0m</div>
+            <div id="gameOver" class="hidden">
+                <h2>Game Over!</h2>
+                <p>Distance: <span id="finalScore">0</span>m</p>
+                <p>Best: <span id="bestScore">0</span>m</p>
+                <button id="restartBtn">Restart</button>
+            </div>
+            <div id="startScreen">
+                <h1>Geometry Rush</h1>
+                <p>Press SPACE or tap to jump!</p>
+                <button id="startBtn">Start Game</button>
+                <div id="controls">
+                    <p><strong>Desktop:</strong> Spacebar or Up Arrow to jump</p>
+                    <p><strong>Mobile:</strong> Tap anywhere to jump</p>
+                </div>
+            </div>
+        </div>
+        <div id="mobileControls" class="hidden">
+            <button id="jumpBtn">JUMP</button>
+        </div>
+    </div>
+
+    <!-- Audio elements -->
+    <audio id="jumpSound" preload="auto">
+        <source src="public/sounds/hit.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="crashSound" preload="auto">
+        <source src="public/sounds/hit.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="backgroundMusic" preload="auto" loop>
+        <source src="public/sounds/background.mp3" type="audio/mpeg">
+    </audio>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
