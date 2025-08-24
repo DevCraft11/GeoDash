@@ -24,6 +24,11 @@ export class Game {
         // Background elements
         this.backgroundOffset = 0;
         this.cloudOffset = 0;
+        this.birdOffset = 0;
+        
+        // Initialize birds
+        this.birds = [];
+        this.initBirds();
     }
     
     reset() {
@@ -35,6 +40,8 @@ export class Game {
         this.gameSpeed = 5;
         this.backgroundOffset = 0;
         this.cloudOffset = 0;
+        this.birdOffset = 0;
+        this.initBirds();
     }
     
     update() {
@@ -49,6 +56,8 @@ export class Game {
         // Update background
         this.backgroundOffset += this.gameSpeed * 0.5;
         this.cloudOffset += this.gameSpeed * 0.2;
+        this.birdOffset += this.gameSpeed * 0.3;
+        this.updateBirds();
         
         // Update game objects
         this.player.update(this.groundY);
@@ -114,6 +123,11 @@ export class Game {
             this.drawCloud(ctx, x + 150, cloudY + 50);
         }
         
+        // Draw flying birds
+        for (const bird of this.birds) {
+            this.drawBird(ctx, bird);
+        }
+        
         // Draw distant mountains
         ctx.fillStyle = 'rgba(108, 122, 137, 0.6)';
         ctx.beginPath();
@@ -162,6 +176,71 @@ export class Game {
         ctx.textAlign = 'right';
         ctx.fillText(`Speed: ${speed}x`, this.width - 20, 30);
         ctx.textAlign = 'left';
+    }
+    
+    initBirds() {
+        this.birds = [];
+        for (let i = 0; i < 6; i++) {
+            this.birds.push({
+                x: Math.random() * this.width * 2,
+                y: this.height * 0.1 + Math.random() * this.height * 0.3,
+                speed: 1 + Math.random() * 2,
+                wingPhase: Math.random() * Math.PI * 2,
+                size: 8 + Math.random() * 6
+            });
+        }
+    }
+    
+    updateBirds() {
+        for (const bird of this.birds) {
+            bird.x -= bird.speed + this.gameSpeed * 0.1;
+            bird.wingPhase += 0.3;
+            
+            // Reset bird position when it goes off screen
+            if (bird.x < -50) {
+                bird.x = this.width + Math.random() * 200;
+                bird.y = this.height * 0.1 + Math.random() * this.height * 0.3;
+            }
+        }
+    }
+    
+    drawBird(ctx, bird) {
+        ctx.save();
+        ctx.translate(bird.x, bird.y);
+        
+        // Bird body
+        ctx.fillStyle = '#2c3e50';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, bird.size, bird.size * 0.6, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Wings
+        const wingFlap = Math.sin(bird.wingPhase) * 0.5;
+        ctx.strokeStyle = '#34495e';
+        ctx.lineWidth = 2;
+        
+        // Left wing
+        ctx.beginPath();
+        ctx.moveTo(-bird.size * 0.5, 0);
+        ctx.quadraticCurveTo(-bird.size * 1.2, -bird.size * 0.8 + wingFlap, -bird.size * 1.5, -bird.size * 0.3);
+        ctx.stroke();
+        
+        // Right wing
+        ctx.beginPath();
+        ctx.moveTo(bird.size * 0.5, 0);
+        ctx.quadraticCurveTo(bird.size * 1.2, -bird.size * 0.8 + wingFlap, bird.size * 1.5, -bird.size * 0.3);
+        ctx.stroke();
+        
+        // Beak
+        ctx.fillStyle = '#f39c12';
+        ctx.beginPath();
+        ctx.moveTo(bird.size * 0.8, 0);
+        ctx.lineTo(bird.size * 1.2, -bird.size * 0.2);
+        ctx.lineTo(bird.size * 1.2, bird.size * 0.2);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.restore();
     }
     
     getDistance() {

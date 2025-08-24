@@ -7,11 +7,13 @@ export class ObstacleManager {
         this.spawnInterval = 80; // frames between spawns
         this.groundY = height * 0.9;
         
-        // Obstacle types
+        // Fun fruit obstacle types
         this.obstacleTypes = [
-            { type: 'spike', width: 25, height: 40, color: '#ff4444' },
-            { type: 'block', width: 30, height: 60, color: '#444444' },
-            { type: 'tall_spike', width: 20, height: 80, color: '#ff6666' },
+            { type: 'banana', width: 25, height: 45, color: '#fff332' },
+            { type: 'orange', width: 35, height: 35, color: '#ff8c00' },
+            { type: 'apple', width: 30, height: 35, color: '#ff4444' },
+            { type: 'pineapple', width: 28, height: 50, color: '#ffb347' },
+            { type: 'watermelon', width: 40, height: 25, color: '#00ff7f' },
         ];
     }
     
@@ -70,66 +72,198 @@ export class ObstacleManager {
         ctx.save();
         
         switch (obstacle.type) {
-            case 'spike':
-                this.drawSpike(ctx, obstacle);
+            case 'banana':
+                this.drawBanana(ctx, obstacle);
                 break;
-            case 'tall_spike':
-                this.drawSpike(ctx, obstacle);
+            case 'orange':
+                this.drawOrange(ctx, obstacle);
                 break;
-            case 'block':
-                this.drawBlock(ctx, obstacle);
+            case 'apple':
+                this.drawApple(ctx, obstacle);
+                break;
+            case 'pineapple':
+                this.drawPineapple(ctx, obstacle);
+                break;
+            case 'watermelon':
+                this.drawWatermelon(ctx, obstacle);
                 break;
         }
         
         ctx.restore();
     }
     
-    drawSpike(ctx, obstacle) {
-        // Main spike body
+    drawBanana(ctx, obstacle) {
+        // Banana body
         ctx.fillStyle = obstacle.color;
         ctx.beginPath();
-        ctx.moveTo(obstacle.x + obstacle.width / 2, obstacle.y); // Top point
-        ctx.lineTo(obstacle.x, obstacle.y + obstacle.height); // Bottom left
-        ctx.lineTo(obstacle.x + obstacle.width, obstacle.y + obstacle.height); // Bottom right
-        ctx.closePath();
+        ctx.ellipse(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, 
+                   obstacle.width/2, obstacle.height/2, Math.PI/6, 0, Math.PI * 2);
         ctx.fill();
         
-        // Spike border
+        // Banana tip
+        ctx.fillStyle = '#e6c200';
+        ctx.beginPath();
+        ctx.ellipse(obstacle.x + obstacle.width/2, obstacle.y + 5, 
+                   obstacle.width/3, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Border
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
         ctx.stroke();
         
-        // Inner highlight
-        ctx.fillStyle = '#ff8888';
-        ctx.beginPath();
-        ctx.moveTo(obstacle.x + obstacle.width / 2, obstacle.y + 5);
-        ctx.lineTo(obstacle.x + 5, obstacle.y + obstacle.height - 5);
-        ctx.lineTo(obstacle.x + obstacle.width - 5, obstacle.y + obstacle.height - 5);
-        ctx.closePath();
-        ctx.fill();
+        // Banana lines
+        ctx.strokeStyle = '#e6c200';
+        ctx.lineWidth = 1;
+        for(let i = 0; i < 3; i++) {
+            ctx.beginPath();
+            ctx.moveTo(obstacle.x + 5, obstacle.y + 10 + i * 10);
+            ctx.lineTo(obstacle.x + obstacle.width - 5, obstacle.y + 15 + i * 10);
+            ctx.stroke();
+        }
     }
     
-    drawBlock(ctx, obstacle) {
-        // Main block
+    drawOrange(ctx, obstacle) {
+        // Orange body
         ctx.fillStyle = obstacle.color;
-        ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        ctx.beginPath();
+        ctx.arc(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, 
+               obstacle.width/2, 0, Math.PI * 2);
+        ctx.fill();
         
-        // Block border
+        // Orange texture dots
+        ctx.fillStyle = '#ff6600';
+        for(let i = 0; i < 8; i++) {
+            const angle = (i / 8) * Math.PI * 2;
+            const x = obstacle.x + obstacle.width/2 + Math.cos(angle) * 8;
+            const y = obstacle.y + obstacle.height/2 + Math.sin(angle) * 8;
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Orange stem
+        ctx.fillStyle = '#228b22';
+        ctx.fillRect(obstacle.x + obstacle.width/2 - 2, obstacle.y - 3, 4, 6);
+        
+        // Border
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
-        ctx.strokeRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        ctx.beginPath();
+        ctx.arc(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, 
+               obstacle.width/2, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+    
+    drawApple(ctx, obstacle) {
+        // Apple body
+        ctx.fillStyle = obstacle.color;
+        ctx.beginPath();
+        ctx.arc(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2 + 5, 
+               obstacle.width/2, 0, Math.PI * 2);
+        ctx.fill();
         
-        // Inner details
-        ctx.fillStyle = '#666';
-        ctx.fillRect(obstacle.x + 3, obstacle.y + 3, obstacle.width - 6, obstacle.height - 6);
+        // Apple indent at top
+        ctx.fillStyle = '#cc3333';
+        ctx.beginPath();
+        ctx.arc(obstacle.x + obstacle.width/2, obstacle.y + 8, 
+               obstacle.width/3, 0, Math.PI * 2);
+        ctx.fill();
         
-        // Rivets
-        ctx.fillStyle = '#888';
-        const rivetSize = 3;
-        ctx.fillRect(obstacle.x + 5, obstacle.y + 5, rivetSize, rivetSize);
-        ctx.fillRect(obstacle.x + obstacle.width - 8, obstacle.y + 5, rivetSize, rivetSize);
-        ctx.fillRect(obstacle.x + 5, obstacle.y + obstacle.height - 8, rivetSize, rivetSize);
-        ctx.fillRect(obstacle.x + obstacle.width - 8, obstacle.y + obstacle.height - 8, rivetSize, rivetSize);
+        // Apple stem
+        ctx.fillStyle = '#8b4513';
+        ctx.fillRect(obstacle.x + obstacle.width/2 - 1, obstacle.y, 2, 8);
+        
+        // Apple leaf
+        ctx.fillStyle = '#228b22';
+        ctx.beginPath();
+        ctx.ellipse(obstacle.x + obstacle.width/2 + 5, obstacle.y + 3, 4, 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Border
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2 + 5, 
+               obstacle.width/2, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+    
+    drawPineapple(ctx, obstacle) {
+        // Pineapple body
+        ctx.fillStyle = obstacle.color;
+        ctx.beginPath();
+        ctx.ellipse(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2 + 8, 
+                   obstacle.width/2, obstacle.height/2 - 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Pineapple pattern
+        ctx.strokeStyle = '#ff8c00';
+        ctx.lineWidth = 1;
+        for(let i = 0; i < 4; i++) {
+            for(let j = 0; j < 3; j++) {
+                ctx.beginPath();
+                ctx.moveTo(obstacle.x + 5 + j * 8, obstacle.y + 15 + i * 8);
+                ctx.lineTo(obstacle.x + 10 + j * 8, obstacle.y + 20 + i * 8);
+                ctx.stroke();
+            }
+        }
+        
+        // Pineapple leaves
+        ctx.fillStyle = '#228b22';
+        for(let i = 0; i < 5; i++) {
+            ctx.beginPath();
+            ctx.moveTo(obstacle.x + 5 + i * 4, obstacle.y);
+            ctx.lineTo(obstacle.x + 7 + i * 4, obstacle.y - 8);
+            ctx.lineTo(obstacle.x + 9 + i * 4, obstacle.y);
+            ctx.closePath();
+            ctx.fill();
+        }
+        
+        // Border
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2 + 8, 
+                   obstacle.width/2, obstacle.height/2 - 8, 0, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+    
+    drawWatermelon(ctx, obstacle) {
+        // Watermelon body
+        ctx.fillStyle = obstacle.color;
+        ctx.beginPath();
+        ctx.ellipse(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, 
+                   obstacle.width/2, obstacle.height/2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Dark green stripes
+        ctx.fillStyle = '#006400';
+        for(let i = 0; i < 3; i++) {
+            ctx.beginPath();
+            ctx.ellipse(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, 
+                       obstacle.width/2 - 2 - i * 6, obstacle.height/2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = obstacle.color;
+            ctx.beginPath();
+            ctx.ellipse(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, 
+                       obstacle.width/2 - 5 - i * 6, obstacle.height/2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#006400';
+        }
+        
+        // Watermelon stem
+        ctx.fillStyle = '#8b4513';
+        ctx.fillRect(obstacle.x + obstacle.width/2 - 1, obstacle.y - 2, 2, 4);
+        
+        // Border
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, 
+                   obstacle.width/2, obstacle.height/2, 0, 0, Math.PI * 2);
+        ctx.stroke();
     }
     
     getObstacles() {
